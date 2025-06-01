@@ -26,5 +26,7 @@ if pkgversion(LibCURL_jll) < v"8.8"
             end
         end
         write(entrypoint, take!(newio))
+    else
+        @info "LibCURL_jll.jl already points to the system libcurl"
     end
 end
