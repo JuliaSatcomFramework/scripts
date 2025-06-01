@@ -5,8 +5,8 @@ You can use this by doing the following:
 let
     tmpfile = tempname() * ".jl"
     run(`curl -sS -L https://github.com/JuliaSatcomFramework/scripts/raw/refs/heads/main/override_libcurl.jl -o $tmpfile`)
-    tmpfile
-end |> include
+    include(tmpfile)
+end
 =#
 import LibCURL_jll
 
