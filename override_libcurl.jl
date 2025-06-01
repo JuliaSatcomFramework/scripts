@@ -1,4 +1,13 @@
-# This is a script to work around the issue in https://discourse.julialang.org/t/downloads-download-not-working-on-github-while-os-curl-does/129272
+#= 
+This is a script to work around the issue in https://discourse.julialang.org/t/downloads-download-not-working-on-github-while-os-curl-does/129272
+
+You can use this by doing the following:
+let
+    tmpfile = tempname() * ".jl"
+    run(`curl -sS -L https://github.com/JuliaSatcomFramework/scripts/raw/refs/heads/main/override_libcurl.jl -o $tmpfile`)
+    tmpfile
+end |> include
+=#
 import LibCURL_jll
 
 # We only do something if LibCURL_jll does not have OpenSSL
