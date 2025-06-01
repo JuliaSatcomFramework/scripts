@@ -11,7 +11,7 @@ end
 import LibCURL_jll
 
 # We only do something if LibCURL_jll does not have OpenSSL
-if pkgversion(LibCURL_jll) < v"8.8"
+if pkgversion(LibCURL_jll) < v"8.8" && Sys.islinux()
     sys_curl_path = read(`which curl`, String) |> strip
     sys_libcurl_path = let
         out = read(pipeline(`ldd $sys_curl_path`, `grep libcurl`), String) |> strip
