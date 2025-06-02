@@ -27,7 +27,7 @@ if pkgversion(LibCURL_jll) < v"8.8" && Sys.islinux()
         newio = IOBuffer()
         for line in eachline(entrypoint)
             if !isnothing(findfirst(julia_libcurl_name, line))
-                newline = replace(line, julia_libcurl_name => sys_libcurl_path)
+                newline = replace(line, "\"$(julia_libcurl_name)\"" => "\"$(sys_libcurl_path)\"")
                 newline *= " # Line modified to use system libcurl"
                 println(newio, newline)
             else
