@@ -86,8 +86,8 @@ jobs:
     - name: Upload to artifact_releases
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: artifacts_releases
-        name: artifacts_releases
+        tag_name: eop_artifacts
+        name: eop_artifacts
         files: ${{ steps.julia_script.outputs.asset_path }}
         append_body: true
         make_latest: false
