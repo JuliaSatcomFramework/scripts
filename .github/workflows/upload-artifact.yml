@@ -83,11 +83,26 @@ jobs:
         echo "Asset file verified: ${{ steps.julia_script.outputs.asset_path }}"
         echo "File size: $(du -h "${{ steps.julia_script.outputs.asset_path }}" | cut -f1)"
     
+    - name: Check for existing release
+      id: check_release
+      run: |
+        RELEASE_TAG="${{ steps.script_dir.outputs.script_dir }}"
+        if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+          RELEASE_NAME=$(gh release view "$RELEASE_TAG" --json name -q .name)
+          echo "existing_name=$RELEASE_NAME" >> $GITHUB_OUTPUT
+          echo "Found existing release with name: $RELEASE_NAME"
+        else
+          echo "No existing release found"
+          echo "existing_name=" >> $GITHUB_OUTPUT
+        fi
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Upload to artifact_releases
       uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ steps.script_dir.outputs.script_dir }}
-        name: ${{ steps.script_dir.outputs.script_dir }}
+        name: ${{ steps.check_release.outputs.existing_name || steps.script_dir.outputs.script_dir }}
         files: ${{ steps.julia_script.outputs.asset_path }}
         append_body: true
         make_latest: false
