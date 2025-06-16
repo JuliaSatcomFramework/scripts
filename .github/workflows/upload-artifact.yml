@@ -61,7 +61,7 @@ jobs:
           
           # Find the most recently created file in assets directory
           ASSET_FILE=$(ls -t assets/ | head -n 1)
-          ASSET_PATH="assets/$ASSET_FILE"
+          ASSET_PATH="${{ steps.script_dir.outputs.script_dir }}/assets/$ASSET_FILE"
           
           echo "asset_file=$ASSET_FILE" >> $GITHUB_OUTPUT
           echo "asset_path=$ASSET_PATH" >> $GITHUB_OUTPUT
