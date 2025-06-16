@@ -98,10 +98,17 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
+    - name: Configure Git
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "github-actions@github.com"
+    
     - name: Check for Artifacts.toml changes
       id: check_changes
       run: |
         cd ${{ steps.script_dir.outputs.script_dir }}
+        # First, ensure Git knows about the changes
+        git add Artifacts.toml
         if git diff --quiet HEAD -- Artifacts.toml; then
           echo "No changes to Artifacts.toml"
           echo "has_changes=false" >> $GITHUB_OUTPUT
