@@ -137,4 +137,6 @@ jobs:
         branch: update-artifacts-toml-${{ github.run_number }}
         base: ${{ github.ref_name }}
         delete-branch: true
-        draft: false 
+        draft: false
+        add-paths: |
+          ${{ steps.script_dir.outputs.script_dir }}/Artifacts.toml 
