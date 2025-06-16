@@ -2,6 +2,13 @@ name: Upload Artifact to Release
 
 on:
   workflow_dispatch:
+    inputs:
+      script:
+        description: 'Julia script to execute'
+        required: true
+        type: choice
+        options:
+          - eop_artifacts/create_eop_artifact.jl
 
 permissions:
   contents: write
@@ -19,6 +26,14 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         fetch-depth: 0
     
+    - name: Get script directory
+      id: script_dir
+      run: |
+        SCRIPT_PATH="${{ github.event.inputs.script }}"
+        SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
+        echo "script_dir=$SCRIPT_DIR" >> $GITHUB_OUTPUT
+        echo "script_name=$(basename "$SCRIPT_PATH")" >> $GITHUB_OUTPUT
+    
     - name: Get current timestamp
       id: timestamp
       run: echo "current=$(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_OUTPUT
@@ -30,14 +45,14 @@ jobs:
     
     - name: Install dependencies
       run: |
-        julia --project=artifacts_scripts -e 'using Pkg; Pkg.instantiate()'
+        julia --project=${{ steps.script_dir.outputs.script_dir }} -e 'using Pkg; Pkg.instantiate()'
     
     - name: Execute Julia script
       id: julia_script
       run: | 
-        cd eop_artifacts
-        echo "Executing script: eop_artifacts/create_eop_artifact.jl"
-        julia --project=. -e "include(\"create_eop_artifact.jl\")"
+        cd ${{ steps.script_dir.outputs.script_dir }}
+        echo "Executing script: ${{ github.event.inputs.script }}"
+        julia --project=. -e "include(\"${{ steps.script_dir.outputs.script_name }}\")"
         
         # Check if assets directory exists and find generated files
         if [ -d "assets" ]; then
@@ -78,7 +93,7 @@ jobs:
         make_latest: false
         body: |
           Uploaded artifact: `${{ steps.julia_script.outputs.asset_file }}`
-          - Script executed: [`${{ github.event.inputs.script }}`](https://github.com/${{ github.repository }}/blob/${{ github.sha }}/eop_artifacts/create_eop_artifact.jl)
+          - Script executed: [`${{ github.event.inputs.script }}`](https://github.com/${{ github.repository }}/blob/${{ github.sha }}/${{ github.event.inputs.script }})
           - Created at: ${{ steps.timestamp.outputs.current }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -86,6 +101,7 @@ jobs:
     - name: Check for Artifacts.toml changes
       id: check_changes
       run: |
+        cd ${{ steps.script_dir.outputs.script_dir }}
         if git diff --quiet HEAD -- Artifacts.toml; then
           echo "No changes to Artifacts.toml"
           echo "has_changes=false" >> $GITHUB_OUTPUT
@@ -106,7 +122,7 @@ jobs:
           This PR updates the Artifacts.toml file after generating and uploading the artifact: `${{ steps.julia_script.outputs.asset_file }}`
           
           **Details:**
-          - Script executed: [`create_eop_artifact.jl`](https://github.com/${{ github.repository }}/blob/${{ github.sha }}/eop_artifacts/create_eop_artifact.jl)
+          - Script executed: [`${{ github.event.inputs.script }}`](https://github.com/${{ github.repository }}/blob/${{ github.sha }}/${{ github.event.inputs.script }})
           - Artifact uploaded: `${{ steps.julia_script.outputs.asset_file }}`
           - Generated at: ${{ steps.timestamp.outputs.current }}
           
