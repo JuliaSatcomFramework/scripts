@@ -10,7 +10,7 @@ using LibGit2
 
 permalink = let
     sha = LibGit2.head(dirname(@__DIR__))
-    root = "https://github.com/JuliaSatcomFramework/github_scripts/blob"
+    root = "https://github.com/JuliaSatcomFramework/scripts/blob"
     join([root, sha, "eop_artifacts", basename(@__FILE__)], "/")
 end
 
@@ -19,7 +19,7 @@ end
 function create_eop_1980_artifact()
 
     artifact_toml = joinpath(@__DIR__, "Artifacts.toml")
-    release_root_url = "https://github.com/JuliaSatcomFramework/github_scripts/releases/download/eop_artifacts/"
+    release_root_url = "https://github.com/JuliaSatcomFramework/scripts/releases/download/eop_artifacts/"
 
     current_datetime = now()
     datestring = Dates.format(current_datetime, "yyyy-mm-dd")
