@@ -1,0 +1,6 @@
+[eop1980]
+git-tree-sha1 = "f56aa3219dc40186a2fb9e6f5ae3f2df0bdc10e8"
+
+    [[eop1980.download]]
+    sha256 = "8010c187c0331956234e3725699735070688b1a1fa93976b7690fac13117c026"
+    url = "https://github.com/JuliaSatcomFramework/scripts/releases/download/eop_artifacts/eop1980_2025-06-16.tar.gz"
